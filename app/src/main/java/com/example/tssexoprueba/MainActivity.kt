@@ -2,7 +2,6 @@ package com.example.tssexoprueba
 
 import android.content.Context
 import android.os.Bundle
-import android.os.Looper
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.exoplayer2.ExoPlaybackException
@@ -37,17 +36,17 @@ class MainActivity : AppCompatActivity() {
                     // Create a player instance.
 
                     // Create an RTSP media source pointing to an RTSP uri and override the socket factory.
-                    val mediaSource: MediaSource = RtspMediaSource.Factory()
+                    val mediaSource: MediaSource = RtspMediaSource.Factory().setDebugLoggingEnabled(true)
                         .createMediaSource(
                             MediaItem.fromUri(
-                                "rtsp://admin:Demes2323@hik1pro2.davidsat.dnsdemes.com:554/ISAPI/Streaming/Channels/301"
+                                "rtsp://admin:Demes2323@hik1pro2.davidsat.dnsdemes.com:554/ISAPI/Streaming/tracks/301?starttime=20221121T000000Z"
                             )
                         )
                     // Set the media source to be played.
                     player = ExoPlayer.Builder(context).build()
                     player.setMediaSource(mediaSource)
-                    var analyticsListener = EventLogger(DefaultTrackSelector())
-                    player.addAnalyticsListener(analyticsListener)
+                    //var analyticsListener = EventLogger(DefaultTrackSelector())
+                    //player.addAnalyticsListener(analyticsListener)
                     playerView.player = player
                     // Prepare the player.
                     player.prepare()
