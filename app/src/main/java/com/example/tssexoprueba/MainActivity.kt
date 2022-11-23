@@ -1,72 +1,124 @@
 package com.example.tssexoprueba
 
+import android.annotation.SuppressLint
+import android.content.ContentValues.TAG
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.exoplayer2.ExoPlaybackException
-import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.source.MediaSource
-import com.google.android.exoplayer2.source.rtsp.RtspMediaSource
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
-import com.google.android.exoplayer2.ui.StyledPlayerView
-import com.google.android.exoplayer2.util.EventLogger
-
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
+import androidx.media3.common.MediaItem
+import androidx.media3.common.MimeTypes
+import androidx.media3.common.Player
+import androidx.media3.common.util.Util
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
+import com.example.tssexoprueba.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var player: ExoPlayer
+    private val viewBinding by lazy(LazyThreadSafetyMode.NONE) {
+        ActivityMainBinding.inflate(layoutInflater)
+    }
+
+    private val playbackStateListener: Player.Listener = playbackStateListener()
+    private var player: ExoPlayer? = null
+
+    private var playWhenReady = true
+    private var currentItem = 0
+    private var playbackPosition = 0L
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-
-        exoplayer(this, 1)
+        setContentView(viewBinding.root)
     }
 
-    fun exoplayer(context: Context, numberSurfecaeView: Int) {
 
-        when (numberSurfecaeView) {
-            1 -> {
-                try {
-                    //Get View and put style
-                    val playerView = findViewById<StyledPlayerView>(R.id.player_view)
-                    playerView.requestFocus()
-                    // Create a player instance.
-
-                    // Create an RTSP media source pointing to an RTSP uri and override the socket factory.
-                    val mediaSource: MediaSource = RtspMediaSource.Factory().setDebugLoggingEnabled(true)
-                        .createMediaSource(
-                            MediaItem.fromUri(
-                                "rtsp://admin:Demes2323@hik1pro2.davidsat.dnsdemes.com:554/ISAPI/Streaming/tracks/301?starttime=20221121T000000Z"
-                            )
-                        )
-                    // Set the media source to be played.
-                    player = ExoPlayer.Builder(context).build()
-                    player.setMediaSource(mediaSource)
-                    //var analyticsListener = EventLogger(DefaultTrackSelector())
-                    //player.addAnalyticsListener(analyticsListener)
-                    playerView.player = player
-                    // Prepare the player.
-                    player.prepare()
-                    player.playWhenReady = true
-                } catch (error: ExoPlaybackException){
-                    Log.e("MyExoPlaybackException", error.toString())
-                }
-            }
+    public override fun onStart() {
+        super.onStart()
+        if (Util.SDK_INT > 23) {
+            initializePlayer()
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-            super.onDestroy()
-            //player.removeAnalyticsListener(analyticsListener)
-            //player.removeListener(playbackListener)
-            //player.removeAudioListener(playbackListener)
-            //player.removeVideoListener(playbackListener)
-
-            player.release()
+    public override fun onResume() {
+        super.onResume()
+        hideSystemUi()
+        if (Util.SDK_INT <= 23 || player == null) {
+            initializePlayer()
+        }
     }
 
+    public override fun onPause() {
+        super.onPause()
+        if (Util.SDK_INT <= 23) {
+            releasePlayer()
+        }
+    }
+
+    public override fun onStop() {
+        super.onStop()
+        if (Util.SDK_INT > 23) {
+            releasePlayer()
+        }
+    }
+
+
+    private fun initializePlayer() {
+        val trackSelector = DefaultTrackSelector(this).apply {
+            setParameters(buildUponParameters().setMaxVideoSizeSd())
+        }
+        player = ExoPlayer.Builder(this)
+            .setTrackSelector(trackSelector)
+            .build()
+            .also { exoPlayer ->
+                viewBinding.videoView.player = exoPlayer
+
+                val mediaItem = MediaItem.Builder()
+                    .setUri("rtsp://admin:Demes2323@hik1pro2.davidsat.dnsdemes.com:554/ISAPI/Streaming/Channels/301")
+                    .setMimeType(MimeTypes.APPLICATION_RTSP)
+                    .build()
+                exoPlayer.setMediaItem(mediaItem)
+                exoPlayer.playWhenReady = playWhenReady
+                exoPlayer.seekTo(currentItem, playbackPosition)
+                exoPlayer.addListener(playbackStateListener)
+                exoPlayer.prepare()
+            }
+    }
+
+    private fun releasePlayer() {
+        player?.let { exoPlayer ->
+            playbackPosition = exoPlayer.currentPosition
+            currentItem = exoPlayer.currentMediaItemIndex
+            playWhenReady = exoPlayer.playWhenReady
+            exoPlayer.removeListener(playbackStateListener)
+            exoPlayer.release()
+        }
+        player = null
+    }
+
+    @SuppressLint("InlinedApi")
+    private fun hideSystemUi() {
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        WindowInsetsControllerCompat(window, viewBinding.videoView).let { controller ->
+            controller.hide(WindowInsetsCompat.Type.systemBars())
+            controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        }
+    }
+
+}
+
+private fun playbackStateListener() = object : Player.Listener {
+    override fun onPlaybackStateChanged(playbackState: Int) {
+        val stateString: String = when (playbackState) {
+            ExoPlayer.STATE_IDLE -> "ExoPlayer.STATE_IDLE      -"
+            ExoPlayer.STATE_BUFFERING -> "ExoPlayer.STATE_BUFFERING -"
+            ExoPlayer.STATE_READY -> "ExoPlayer.STATE_READY     -"
+            ExoPlayer.STATE_ENDED -> "ExoPlayer.STATE_ENDED     -"
+            else -> "UNKNOWN_STATE             -"
+        }
+        Log.d(TAG, "changed state to $stateString")
+    }
 }
