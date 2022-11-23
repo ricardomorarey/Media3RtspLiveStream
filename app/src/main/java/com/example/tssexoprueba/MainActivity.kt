@@ -33,13 +33,17 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(viewBinding.root)
-    }
+        //initializePlayer()
 
+        viewBinding.button.setOnClickListener {
+            initializePlayer()
+        }
+    }
 
     public override fun onStart() {
         super.onStart()
         if (Util.SDK_INT > 23) {
-            initializePlayer()
+            //initializePlayer()
         }
     }
 
@@ -47,7 +51,7 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         hideSystemUi()
         if (Util.SDK_INT <= 23 || player == null) {
-            initializePlayer()
+            //initializePlayer()
         }
     }
 
@@ -77,7 +81,7 @@ class MainActivity : AppCompatActivity() {
                 viewBinding.videoView.player = exoPlayer
 
                 val mediaItem = MediaItem.Builder()
-                    .setUri("rtsp://")
+                    .setUri("rtsp://admin:Demes2323@hik1pro2.davidsat.dnsdemes.com:554/ISAPI/Streaming/Channels/301")
                     .setMimeType(MimeTypes.APPLICATION_RTSP)
                     .build()
                 exoPlayer.setMediaItem(mediaItem)
