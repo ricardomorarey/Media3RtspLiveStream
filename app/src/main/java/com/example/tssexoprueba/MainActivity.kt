@@ -77,7 +77,7 @@ class MainActivity : AppCompatActivity() {
                 viewBinding.videoView.player = exoPlayer
 
                 val mediaItem = MediaItem.Builder()
-                    .setUri("rtsp://admin:Demes2323@hik1pro2.davidsat.dnsdemes.com:554/ISAPI/Streaming/Channels/301")
+                    .setUri("rtsp://")
                     .setMimeType(MimeTypes.APPLICATION_RTSP)
                     .build()
                 exoPlayer.setMediaItem(mediaItem)
