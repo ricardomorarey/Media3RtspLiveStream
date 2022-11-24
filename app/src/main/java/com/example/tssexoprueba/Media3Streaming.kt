@@ -3,7 +3,6 @@ package com.example.tssexoprueba
 import android.content.ContentValues
 import android.content.Context
 import android.util.Log
-import android.view.View
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MimeTypes
 import androidx.media3.common.Player
@@ -24,7 +23,10 @@ class Media3Streaming(context: Context, binding: ActivityMainBinding) {
     private var currentItem = 0
     private var playbackPosition = 0L
 
+    private var isPlayMedia = false
+
     fun initializePlayer(rtspUri: String) {
+
         val trackSelector = DefaultTrackSelector(context).apply {
             setParameters(buildUponParameters().setMaxVideoSizeSd())
         }
@@ -44,6 +46,7 @@ class Media3Streaming(context: Context, binding: ActivityMainBinding) {
                 exoPlayer.seekTo(currentItem, playbackPosition)
                 exoPlayer.addListener(playbackStateListener)
                 exoPlayer.prepare()
+                isPlayMedia = true
             }
     }
 
@@ -56,6 +59,11 @@ class Media3Streaming(context: Context, binding: ActivityMainBinding) {
             exoPlayer.release()
         }
         player = null
+        isPlayMedia = false
+    }
+
+    fun isPlayMedia(): Boolean {
+        return isPlayMedia
     }
 }
 

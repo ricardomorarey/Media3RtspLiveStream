@@ -31,6 +31,9 @@ class MainActivity : AppCompatActivity() {
 
         val mymedia1 = Media3Streaming(this, viewBinding)
         viewBinding.button.setOnClickListener {
+            if (mymedia1.isPlayMedia()) {
+                mymedia1.releasePlayer()
+            }
             val rtspUri: String = viewBinding.txRtsp.text.toString()
             mymedia1.initializePlayer(rtspUri)
         }
