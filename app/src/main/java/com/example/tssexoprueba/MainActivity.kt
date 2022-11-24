@@ -37,6 +37,9 @@ class MainActivity : AppCompatActivity() {
             val rtspUri: String = viewBinding.txRtsp.text.toString()
             mymedia1.initializePlayer(rtspUri)
         }
+        viewBinding.button2.setOnClickListener{mymedia1.setOnVolume()}
+        viewBinding.button3.setOnClickListener{mymedia1.setOffVolume()}
+
     }
 
 

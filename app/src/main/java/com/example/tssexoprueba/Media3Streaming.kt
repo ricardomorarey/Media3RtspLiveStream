@@ -2,14 +2,19 @@ package com.example.tssexoprueba
 
 import android.content.ContentValues
 import android.content.Context
+import android.util.AndroidException
 import android.util.Log
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MimeTypes
 import androidx.media3.common.Player
+import androidx.media3.exoplayer.ExoPlaybackException
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.rtsp.RtspMediaSource
+import androidx.media3.exoplayer.text.ExoplayerCuesDecoder
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import com.example.tssexoprueba.databinding.ActivityMainBinding
+import java.lang.Error
+
 
 class Media3Streaming(context: Context, binding: ActivityMainBinding) {
 
@@ -27,27 +32,41 @@ class Media3Streaming(context: Context, binding: ActivityMainBinding) {
 
     fun initializePlayer(rtspUri: String) {
 
+        try {
         val trackSelector = DefaultTrackSelector(context).apply {
             setParameters(buildUponParameters().setMaxVideoSizeSd())
         }
-        player = ExoPlayer.Builder(context)
-            .setTrackSelector(trackSelector)
-            .setMediaSourceFactory(RtspMediaSource.Factory().setDebugLoggingEnabled(true))
-            .build()
-            .also { exoPlayer ->
-                viewBinding.videoView.player = exoPlayer
 
-                val mediaItem = MediaItem.Builder()
-                    .setUri(rtspUri)
-                    .setMimeType(MimeTypes.APPLICATION_RTSP)
-                    .build()
-                exoPlayer.setMediaItem(mediaItem)
-                exoPlayer.playWhenReady = playWhenReady
-                exoPlayer.seekTo(currentItem, playbackPosition)
-                exoPlayer.addListener(playbackStateListener)
-                exoPlayer.prepare()
-                isPlayMedia = true
-            }
+            player = ExoPlayer.Builder(context)
+                .setTrackSelector(trackSelector)
+                .setMediaSourceFactory(RtspMediaSource.Factory().setDebugLoggingEnabled(true))
+                .build()
+                .also { exoPlayer ->
+
+                    viewBinding.videoView.player = exoPlayer
+
+                    val mediaItem = MediaItem.Builder()
+                        .setUri(rtspUri)
+                        .setMimeType(MimeTypes.APPLICATION_RTSP)
+                        .build()
+                    exoPlayer.setMediaItem(mediaItem)
+                    exoPlayer.playWhenReady = playWhenReady
+                    exoPlayer.seekTo(currentItem, playbackPosition)
+                    exoPlayer.addListener(playbackStateListener)
+                    exoPlayer.prepare()
+                    isPlayMedia = true
+                }
+        } catch (e: ExoPlaybackException) {
+            Log.e("ERROR", e.toString())
+        }
+    }
+
+    fun setOnVolume(){
+        player!!.volume = 1.0F
+    }
+
+    fun setOffVolume(){
+        player!!.volume = 0F
     }
 
     fun releasePlayer() {
@@ -79,3 +98,4 @@ fun playbackStateListener() = object : Player.Listener {
         Log.d(ContentValues.TAG, "changed state to $stateString")
     }
 }
+
