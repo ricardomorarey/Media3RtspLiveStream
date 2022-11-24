@@ -6,34 +6,36 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+
     <androidx.media3.ui.PlayerView
         android:id="@+id/video_view"
         android:layout_width="match_parent"
         android:layout_height="300dp"
-        app:auto_show="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:show_buffering="always"
         app:resize_mode="fill"
-        app:show_buffering="always" />
+        app:use_controller="true"
+        app:auto_show="false" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textInputLayout"
         android:layout_width="0dp"
-        android:hint="rtsp://your_user:your_pass@your_host:your_port/..."
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
+        android:hint="rtsp://your_user:your_pass@your_host:your_port/..."
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/video_view">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/tx_rtsp"
-            android:text=""
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:text="" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
@@ -66,6 +68,18 @@
         android:layout_marginEnd="29dp"
         android:text="voff"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button" />
+
+    <Button
+        android:id="@+id/button4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="143dp"
+        android:layout_marginTop="121dp"
+        android:layout_marginEnd="174dp"
+        android:text="stop"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/button" />
 
 

@@ -39,6 +39,7 @@ class MainActivity : AppCompatActivity() {
         }
         viewBinding.button2.setOnClickListener{mymedia1.setOnVolume()}
         viewBinding.button3.setOnClickListener{mymedia1.setOffVolume()}
+        viewBinding.button4.setOnClickListener{mymedia1.stopPlay()}
 
     }
 

@@ -69,6 +69,13 @@ class Media3Streaming(context: Context, binding: ActivityMainBinding) {
         player!!.volume = 0F
     }
 
+    fun stopPlay(){
+        player!!.stop()
+        player!!.clearMediaItems()
+        releasePlayer()
+        isPlayMedia = false
+    }
+
     fun releasePlayer() {
         player?.let { exoPlayer ->
             playbackPosition = exoPlayer.currentPosition
