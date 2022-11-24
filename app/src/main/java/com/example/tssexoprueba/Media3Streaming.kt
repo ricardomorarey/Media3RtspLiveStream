@@ -8,6 +8,7 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.MimeTypes
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.rtsp.RtspMediaSource
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import com.example.tssexoprueba.databinding.ActivityMainBinding
 
@@ -23,18 +24,19 @@ class Media3Streaming(context: Context, binding: ActivityMainBinding) {
     private var currentItem = 0
     private var playbackPosition = 0L
 
-    fun initializePlayer() {
+    fun initializePlayer(rtspUri: String) {
         val trackSelector = DefaultTrackSelector(context).apply {
             setParameters(buildUponParameters().setMaxVideoSizeSd())
         }
         player = ExoPlayer.Builder(context)
             .setTrackSelector(trackSelector)
+            .setMediaSourceFactory(RtspMediaSource.Factory().setDebugLoggingEnabled(true))
             .build()
             .also { exoPlayer ->
                 viewBinding.videoView.player = exoPlayer
 
                 val mediaItem = MediaItem.Builder()
-                    .setUri("rtsp://")
+                    .setUri(rtspUri)
                     .setMimeType(MimeTypes.APPLICATION_RTSP)
                     .build()
                 exoPlayer.setMediaItem(mediaItem)
