@@ -44,18 +44,12 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    public override fun onPause() {
-        super.onPause()
-        if (mymedia1 != null) {
-            mymedia1.releasePlayer()
-        }
-    }
+
 
     public override fun onStop() {
         super.onStop()
-        if (mymedia1 != null) {
-            mymedia1.releasePlayer()
-        }
+            mymedia1!!.releasePlayer()
+
     }
 
     @SuppressLint("InlinedApi")

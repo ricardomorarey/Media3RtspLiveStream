@@ -2,7 +2,6 @@ package com.example.tssexoprueba
 
 import android.content.ContentValues
 import android.content.Context
-import android.util.AndroidException
 import android.util.Log
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MimeTypes
@@ -10,10 +9,8 @@ import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlaybackException
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.rtsp.RtspMediaSource
-import androidx.media3.exoplayer.text.ExoplayerCuesDecoder
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import com.example.tssexoprueba.databinding.ActivityMainBinding
-import java.lang.Error
 
 
 class Media3Streaming(context: Context, binding: ActivityMainBinding) {
